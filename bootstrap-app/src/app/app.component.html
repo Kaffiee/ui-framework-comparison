@@ -1,0 +1,90 @@
+<p-toast></p-toast>
+
+<div class="page-container">
+  <div class="header">
+    <h1>Employee Management</h1>
+    <p-button label="Admin" icon="pi pi-user" severity="secondary"></p-button>
+  </div>
+
+  <div class="cards-section">
+    <p-card header="Total Employees" class="dashboard-card">
+      <p class="kpi-value">128</p>
+    </p-card>
+
+    <p-card header="Active Projects" class="dashboard-card">
+      <p class="kpi-value">12</p>
+    </p-card>
+
+    <p-card header="Open Requests" class="dashboard-card">
+      <p class="kpi-value">7</p>
+    </p-card>
+  </div>
+
+  <p-card header="Add Employee" class="form-card">
+    <div class="form-grid">
+      <div class="field">
+        <label for="firstName">First Name</label>
+        <input id="firstName" type="text" pInputText [(ngModel)]="firstName" />
+      </div>
+
+      <div class="field">
+        <label for="lastName">Last Name</label>
+        <input id="lastName" type="text" pInputText [(ngModel)]="lastName" />
+      </div>
+
+      <div class="field full-width">
+        <label for="email">Email</label>
+        <input id="email" type="email" pInputText [(ngModel)]="email" />
+      </div>
+
+      <div class="field">
+        <label for="department">Department</label>
+        <p-select
+          [options]="departments"
+          [(ngModel)]="department"
+          optionLabel="name"
+          optionValue="name"
+          placeholder="Select department">
+        </p-select>
+      </div>
+
+      <div class="field">
+        <label for="role">Role</label>
+        <p-select
+          [options]="roles"
+          [(ngModel)]="role"
+          optionLabel="name"
+          optionValue="name"
+          placeholder="Select role">
+        </p-select>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <p-button label="Save" icon="pi pi-check" (onClick)="showSuccess()"></p-button>
+      <p-button label="Cancel" severity="secondary"></p-button>
+    </div>
+  </p-card>
+
+  <p-card header="Employee Overview" class="table-card">
+    <p-table [value]="employees" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template #header>
+        <tr>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Role</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-employee>
+        <tr>
+          <td>{{ employee.name }}</td>
+          <td>{{ employee.department }}</td>
+          <td>{{ employee.role }}</td>
+          <td>{{ employee.status }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>
