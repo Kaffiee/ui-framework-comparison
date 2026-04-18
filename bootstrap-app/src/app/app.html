@@ -1,0 +1,686 @@
+@if (toastMessage()) {
+  <div class="app-toast">
+    <div class="alert shadow-sm mb-0" [class.alert-success]="toastTone() === 'success'"
+      [class.alert-danger]="toastTone() === 'danger'" [class.alert-info]="toastTone() === 'info'">
+      {{ toastMessage() }}
+    </div>
+  </div>
+}
+
+@if (confirmDialogOpen()) {
+  <div class="modal-backdrop-custom">
+    <div class="dialog-card">
+      <h3>Deactivate employee?</h3>
+      <p class="text-muted">
+        This frontend-only workflow changes the employee status in mock data so the list and detail
+        views stay comparable across all three frameworks.
+      </p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeDeactivateDialog()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmDeactivation()">
+          Set inactive
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<div class="portal-shell">
+  <aside class="sidebar">
+    <div>
+      <div class="eyebrow">Bachelor Thesis Prototype</div>
+      <h1>Bootstrap Employee Portal</h1>
+      <p class="sidebar-copy">
+        Frontend-only reference application for comparing standardization potential, flexibility, and
+        integration effort.
+      </p>
+    </div>
+
+    <div class="sidebar-summary">
+      <span class="summary-label">Comparison scope</span>
+      <strong>5 views</strong>
+      <span>{{ employees().length }} mock employees</span>
+      <span>Common enterprise workflow set</span>
+    </div>
+
+    <nav class="nav-stack" aria-label="Primary navigation">
+      @for (view of views; track view.id) {
+        <button
+          type="button"
+          class="nav-button"
+          [class.nav-button-active]="activeView() === view.id"
+          (click)="setView(view.id)"
+        >
+          <span class="nav-title">{{ view.label }}</span>
+          <span class="nav-description">{{ view.description }}</span>
+        </button>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="footer-label">Method focus</div>
+      <p>
+        Same pages, same data, same validation rules. The framework is the variable under comparison.
+      </p>
+    </div>
+  </aside>
+
+  <section class="content-area">
+    <header class="topbar">
+      <div>
+        <div class="breadcrumb-line">Operations / UI Framework Comparison / {{ currentViewTitle() }}</div>
+        <h2>{{ currentViewTitle() }}</h2>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" class="btn btn-outline-primary" (click)="refreshDashboard()">
+          Refresh state
+        </button>
+        <button type="button" class="btn btn-primary" (click)="openCreateForm()">Add employee</button>
+      </div>
+    </header>
+
+    @if (activeView() === 'dashboard') {
+      <div class="page-stack">
+        <section class="page-card">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">Representative enterprise scenario</div>
+              <h3>Dashboard as one module, not the whole application</h3>
+            </div>
+            <span class="pill-note">Best fit for SQ1-SQ3</span>
+          </div>
+          <p class="section-copy">
+            The dashboard shows standardized summary widgets, while the rest of the application covers
+            forms, tables, detail views, validation, dialogs, and UI feedback patterns.
+          </p>
+        </section>
+
+        <section class="kpi-grid">
+          @if (dashboardLoading()) {
+            @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+              <article class="page-card kpi-card">
+                <div class="placeholder-glow">
+                  <span class="placeholder col-7"></span>
+                  <span class="placeholder col-4"></span>
+                  <span class="placeholder col-10"></span>
+                </div>
+              </article>
+            }
+          } @else {
+            @for (kpi of kpis(); track kpi.label) {
+              <article class="page-card kpi-card">
+                <div class="eyebrow">{{ kpi.label }}</div>
+                <div class="kpi-value">{{ kpi.value }}</div>
+                <p class="text-muted mb-0">{{ kpi.note }}</p>
+              </article>
+            }
+          }
+        </section>
+
+        <section class="insight-grid">
+          <article class="page-card">
+            <div class="section-header compact">
+              <h3>Recent activity</h3>
+              <span class="pill-note">Feedback and audit trail</span>
+            </div>
+            <div class="stack-list">
+              @for (activity of activities; track activity.title) {
+                <div class="list-item">
+                  <strong>{{ activity.title }}</strong>
+                  <p>{{ activity.description }}</p>
+                  <span>{{ activity.time }}</span>
+                </div>
+              }
+            </div>
+          </article>
+
+          <article class="page-card">
+            <div class="section-header compact">
+              <h3>Upcoming tasks</h3>
+              <span class="pill-note">Good for list standardization</span>
+            </div>
+            <div class="stack-list">
+              @for (task of tasks; track task.title) {
+                <div class="list-item">
+                  <strong>{{ task.title }}</strong>
+                  <p>Owner: {{ task.owner }}</p>
+                  <span>Due {{ task.due }}</span>
+                </div>
+              }
+            </div>
+          </article>
+        </section>
+
+        <section class="page-card">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">SQ1 input</div>
+              <h3>Areas with strong standardization potential</h3>
+            </div>
+          </div>
+          <div class="candidate-grid">
+            @for (area of standardizationAreas; track area.area) {
+              <div class="candidate-card">
+                <h4>{{ area.area }}</h4>
+                <p>{{ area.reason }}</p>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+    }
+
+    @if (activeView() === 'employees') {
+      <div class="page-stack">
+        <section class="page-card">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">SQ2 comparison surface</div>
+              <h3>Employee list with realistic enterprise controls</h3>
+            </div>
+            <span class="pill-note">Search, filters, pagination, row actions</span>
+          </div>
+
+          <div class="filter-grid">
+            <div>
+              <label class="form-label" for="searchTerm">Search</label>
+              <input
+                id="searchTerm"
+                class="form-control"
+                type="text"
+                placeholder="Name, email, or role"
+                [ngModel]="searchTerm()"
+                (ngModelChange)="updateSearchTerm($event)"
+              />
+            </div>
+
+            <div>
+              <label class="form-label" for="departmentFilter">Department</label>
+              <select
+                id="departmentFilter"
+                class="form-select"
+                [ngModel]="departmentFilter()"
+                (ngModelChange)="updateDepartmentFilter($event)"
+              >
+                @for (department of departments; track department) {
+                  <option [value]="department">{{ department }}</option>
+                }
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label" for="statusFilter">Status</label>
+              <select
+                id="statusFilter"
+                class="form-select"
+                [ngModel]="statusFilter()"
+                (ngModelChange)="updateStatusFilter($event)"
+              >
+                @for (status of statuses; track status) {
+                  <option [value]="status">{{ status }}</option>
+                }
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label" for="sortKey">Sort by</label>
+              <select
+                id="sortKey"
+                class="form-select"
+                [ngModel]="sortKey()"
+                (ngModelChange)="updateSort($event)"
+              >
+                @for (sortOption of sortOptions; track sortOption.value) {
+                  <option [value]="sortOption.value">{{ sortOption.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="table-toolbar">
+            <span class="results-count">{{ filteredEmployees().length }} matching employees</span>
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="resetFilters()">
+              Reset filters
+            </button>
+          </div>
+
+          @if (tableLoading()) {
+            <div class="page-card subtle-card">
+              <div class="placeholder-glow">
+                @for (row of [1, 2, 3, 4, 5]; track row) {
+                  <span class="placeholder col-12 mb-2"></span>
+                }
+              </div>
+            </div>
+          } @else if (filteredEmployees().length === 0) {
+            <div class="empty-state">
+              <h3>No employees match the current filter set.</h3>
+              <p>That empty state is intentional for the framework comparison and should exist in all three apps.</p>
+              <button type="button" class="btn btn-primary" (click)="resetFilters()">Reset filters</button>
+            </div>
+          } @else {
+            <div class="table-responsive">
+              <table class="table align-middle mb-0 employee-table">
+                <thead>
+                  <tr>
+                    @for (column of tableColumns; track column) {
+                      <th scope="col">{{ column }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (employee of pagedEmployees(); track employee.id) {
+                    <tr>
+                      <td>
+                        <strong>{{ employeeName(employee) }}</strong>
+                        <div class="small text-muted">{{ employee.email }}</div>
+                      </td>
+                      <td>{{ employee.department }}</td>
+                      <td>{{ employee.role }}</td>
+                      <td>
+                        <span class="status-badge" [class]="statusBadgeClass(employee.status)">
+                          {{ employee.status }}
+                        </span>
+                      </td>
+                      <td>{{ employee.hireDate }}</td>
+                      <td>
+                        <div class="row-actions">
+                          <button type="button" class="btn btn-sm btn-outline-primary" (click)="viewEmployee(employee)">
+                            View
+                          </button>
+                          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="openEditForm(employee)">
+                            Edit
+                          </button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" (click)="openDeactivateDialog(employee)">
+                            Deactivate
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination-row">
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+                [disabled]="currentPage() === 1"
+                (click)="previousPage()"
+              >
+                Previous
+              </button>
+
+              <div class="page-number-group">
+                @for (page of pageNumbers(); track page) {
+                  <button
+                    type="button"
+                    class="btn btn-sm"
+                    [class.btn-primary]="page === currentPage()"
+                    [class.btn-outline-secondary]="page !== currentPage()"
+                    (click)="goToPage(page)"
+                  >
+                    {{ page }}
+                  </button>
+                }
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+                [disabled]="currentPage() === totalPages()"
+                (click)="nextPage()"
+              >
+                Next
+              </button>
+            </div>
+          }
+        </section>
+      </div>
+    }
+
+    @if (activeView() === 'form') {
+      <div class="page-stack">
+        <section class="page-card">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">Form standardization</div>
+              <h3>{{ formMode() === 'create' ? 'Create employee' : 'Edit employee' }}</h3>
+            </div>
+            <span class="pill-note">Validation, grouping, primary and secondary actions</span>
+          </div>
+
+          <form #employeeFormRef="ngForm" novalidate (ngSubmit)="saveEmployee(employeeFormRef)">
+            <div class="form-grid">
+              <div>
+                <label class="form-label" for="firstName">First name</label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  class="form-control"
+                  [class.is-invalid]="employeeFormRef.submitted && firstName.invalid"
+                  [(ngModel)]="employeeForm.firstName"
+                  #firstName="ngModel"
+                  required
+                  minlength="2"
+                />
+                @if (employeeFormRef.submitted && firstName.invalid) {
+                  <div class="invalid-feedback d-block">First name is required.</div>
+                }
+              </div>
+
+              <div>
+                <label class="form-label" for="lastName">Last name</label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  class="form-control"
+                  [class.is-invalid]="employeeFormRef.submitted && lastName.invalid"
+                  [(ngModel)]="employeeForm.lastName"
+                  #lastName="ngModel"
+                  required
+                  minlength="2"
+                />
+                @if (employeeFormRef.submitted && lastName.invalid) {
+                  <div class="invalid-feedback d-block">Last name is required.</div>
+                }
+              </div>
+
+              <div class="full-width">
+                <label class="form-label" for="email">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  class="form-control"
+                  [class.is-invalid]="employeeFormRef.submitted && email.invalid"
+                  [(ngModel)]="employeeForm.email"
+                  #email="ngModel"
+                  required
+                  email
+                />
+                @if (employeeFormRef.submitted && email.invalid) {
+                  <div class="invalid-feedback d-block">A valid corporate email is required.</div>
+                }
+              </div>
+
+              <div>
+                <label class="form-label" for="department">Department</label>
+                <select
+                  id="department"
+                  name="department"
+                  class="form-select"
+                  [(ngModel)]="employeeForm.department"
+                  required
+                >
+                  @for (department of departmentChoices; track department) {
+                    <option [value]="department">{{ department }}</option>
+                  }
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label" for="role">Role</label>
+                <input
+                  id="role"
+                  name="role"
+                  class="form-control"
+                  [(ngModel)]="employeeForm.role"
+                  required
+                />
+              </div>
+
+              <div>
+                <label class="form-label" for="hireDate">Hire date</label>
+                <input
+                  id="hireDate"
+                  name="hireDate"
+                  type="date"
+                  class="form-control"
+                  [(ngModel)]="employeeForm.hireDate"
+                  required
+                />
+              </div>
+
+              <div>
+                <label class="form-label" for="status">Status</label>
+                <select
+                  id="status"
+                  name="status"
+                  class="form-select"
+                  [(ngModel)]="employeeForm.status"
+                  required
+                >
+                  @for (status of employeeStatuses; track status) {
+                    <option [value]="status">{{ status }}</option>
+                  }
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label" for="location">Location</label>
+                <input
+                  id="location"
+                  name="location"
+                  class="form-control"
+                  [(ngModel)]="employeeForm.location"
+                />
+              </div>
+
+              <div>
+                <label class="form-label" for="workload">Workload (%)</label>
+                <input
+                  id="workload"
+                  name="workload"
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="employeeForm.workload"
+                  min="0"
+                  max="100"
+                />
+              </div>
+
+              <div class="full-width">
+                <label class="form-label" for="notes">Notes</label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  class="form-control"
+                  rows="4"
+                  [(ngModel)]="employeeForm.notes"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save employee</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="resetForm(employeeFormRef)">
+                Reset
+              </button>
+              <button type="button" class="btn btn-link" (click)="setView('employees')">Back to list</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    }
+
+    @if (activeView() === 'detail') {
+      <div class="page-stack">
+        @if (selectedEmployee(); as employee) {
+          <section class="page-card">
+            <div class="section-header">
+              <div>
+                <div class="eyebrow">Employee detail view</div>
+                <h3>{{ employeeName(employee) }}</h3>
+              </div>
+              <span class="status-badge" [class]="statusBadgeClass(employee.status)">
+                {{ employee.status }}
+              </span>
+            </div>
+
+            <div class="detail-summary-grid">
+              <div>
+                <span class="summary-meta">Department</span>
+                <strong>{{ employee.department }}</strong>
+              </div>
+              <div>
+                <span class="summary-meta">Role</span>
+                <strong>{{ employee.role }}</strong>
+              </div>
+              <div>
+                <span class="summary-meta">Location</span>
+                <strong>{{ employee.location }}</strong>
+              </div>
+              <div>
+                <span class="summary-meta">Hire date</span>
+                <strong>{{ employee.hireDate }}</strong>
+              </div>
+            </div>
+
+            <div class="segmented-control">
+              <button
+                type="button"
+                class="btn btn-sm"
+                [class.btn-primary]="detailTab() === 'profile'"
+                [class.btn-outline-secondary]="detailTab() !== 'profile'"
+                (click)="setDetailTab('profile')"
+              >
+                Profile
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm"
+                [class.btn-primary]="detailTab() === 'projects'"
+                [class.btn-outline-secondary]="detailTab() !== 'projects'"
+                (click)="setDetailTab('projects')"
+              >
+                Projects
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm"
+                [class.btn-primary]="detailTab() === 'documents'"
+                [class.btn-outline-secondary]="detailTab() !== 'documents'"
+                (click)="setDetailTab('documents')"
+              >
+                Documents
+              </button>
+            </div>
+
+            @if (detailTab() === 'profile') {
+              <div class="detail-panel">
+                <p class="detail-note">{{ employee.notes }}</p>
+                <div class="detail-summary-grid">
+                  <div>
+                    <span class="summary-meta">Email</span>
+                    <strong>{{ employee.email }}</strong>
+                  </div>
+                  <div>
+                    <span class="summary-meta">Workload</span>
+                    <strong>{{ employee.workload }}%</strong>
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if (detailTab() === 'projects') {
+              <div class="detail-panel">
+                <ul class="detail-list">
+                  @for (project of employee.projects; track project) {
+                    <li>{{ project }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            @if (detailTab() === 'documents') {
+              <div class="detail-panel">
+                <ul class="detail-list">
+                  @for (document of employee.documents; track document) {
+                    <li>{{ document }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-outline-primary" (click)="openEditForm(employee)">
+                Edit employee
+              </button>
+              <button type="button" class="btn btn-outline-danger" (click)="openDeactivateDialog(employee)">
+                Deactivate
+              </button>
+            </div>
+          </section>
+        }
+      </div>
+    }
+
+    @if (activeView() === 'style') {
+      <div class="page-stack">
+        <section class="page-card">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">Style guide and evaluation support</div>
+              <h3>Reusable design and interaction standards</h3>
+            </div>
+            <span class="pill-note">Useful evidence for SQ1 and SQ3</span>
+          </div>
+
+          <div class="candidate-grid">
+            <div class="candidate-card">
+              <h4>Buttons</h4>
+              <div class="button-demo">
+                <button type="button" class="btn btn-primary">Primary</button>
+                <button type="button" class="btn btn-outline-primary">Secondary</button>
+                <button type="button" class="btn btn-outline-danger">Critical</button>
+              </div>
+            </div>
+
+            <div class="candidate-card">
+              <h4>Status badges</h4>
+              <div class="button-demo">
+                <span class="status-badge badge-active">Active</span>
+                <span class="status-badge badge-pending">Pending</span>
+                <span class="status-badge badge-inactive">Inactive</span>
+              </div>
+            </div>
+
+            <div class="candidate-card">
+              <h4>Feedback</h4>
+              <p>Bootstrap itself needs more manual assembly for dialogs and toast-like feedback.</p>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="showDemoToast()">
+                Trigger feedback
+              </button>
+            </div>
+
+            <div class="candidate-card">
+              <h4>Risk notes</h4>
+              <p>
+                Greater flexibility can also increase inconsistency if teams bypass shared wrappers and
+                utility rules.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="page-card">
+          <div class="section-header compact">
+            <h3>Standardization checklist</h3>
+          </div>
+          <div class="checklist-grid">
+            @for (area of standardizationAreas; track area.area) {
+              <div class="checklist-row">
+                <strong>{{ area.area }}</strong>
+                <span>{{ area.reason }}</span>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+    }
+  </section>
+</div>

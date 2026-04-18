@@ -1,2 +1,10 @@
-@import 'primeicons/primeicons.css';
-@import 'primeflex/primeflex.css';
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: #edf5ef;
+}

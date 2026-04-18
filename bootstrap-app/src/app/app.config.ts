@@ -1,17 +1,5 @@
-import { ApplicationConfig } from '@angular/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeuix/themes/aura';
-import { MessageService } from 'primeng/api';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideAnimationsAsync(),
-    providePrimeNG({
-      theme: {
-        preset: Aura
-      }
-    }),
-    MessageService
-  ]
+  providers: [provideBrowserGlobalErrorListeners()]
 };

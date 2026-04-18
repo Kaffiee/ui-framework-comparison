@@ -1,8 +1,8 @@
-@import 'primeicons/primeicons.css';
-
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
-  background: #f8f9fb;
+  min-height: 100%;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #eef3f7;
 }
