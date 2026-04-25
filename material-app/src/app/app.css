@@ -232,6 +232,146 @@
   font-size: 0.88rem;
 }
 
+.ops-timeline,
+.ops-task-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.ops-entry {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: 0.9rem;
+}
+
+.ops-rail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.ops-rail::after {
+  content: '';
+  position: absolute;
+  top: 1rem;
+  bottom: -1rem;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: #d7e4ea;
+}
+
+.ops-rail-last::after {
+  display: none;
+}
+
+.ops-dot {
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-top: 0.7rem;
+  border-radius: 999px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #c8d8df;
+  background: #697d89;
+}
+
+.ops-dot-success {
+  background: #2e7d32;
+}
+
+.ops-dot-warning {
+  background: #d17f00;
+}
+
+.ops-dot-info {
+  background: #1565c0;
+}
+
+.ops-dot-danger {
+  background: #c62828;
+}
+
+.ops-card,
+.ops-task-card {
+  background: #f8fbfd;
+  border: 1px solid #dde8ee;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.ops-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+
+.ops-eyebrow {
+  margin-bottom: 0.35rem;
+  color: #627985;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ops-card p,
+.ops-task-card p {
+  margin: 0.55rem 0 0.9rem;
+  color: #516876;
+}
+
+.ops-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.ops-meta span {
+  padding: 0.32rem 0.68rem;
+  border: 1px solid #d7e4ea;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #627985;
+  font-size: 0.8rem;
+}
+
+.ops-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ops-chip-success {
+  background: #dff1e3;
+  border-color: #bed8c4;
+  color: #1b5e20;
+}
+
+.ops-chip-warning {
+  background: #fff0d6;
+  border-color: #f0d08b;
+  color: #8a5600;
+}
+
+.ops-chip-info {
+  background: #e3f0ff;
+  border-color: #bfd8ff;
+  color: #0d47a1;
+}
+
+.ops-chip-danger {
+  background: #fde2e1;
+  border-color: #f5bbb8;
+  color: #b71c1c;
+}
+
 .candidate-card,
 .detail-panel {
   background: #f8fbfd;
@@ -355,6 +495,18 @@
   .content-area,
   .topbar {
     padding: 1rem;
+  }
+
+  .ops-entry {
+    grid-template-columns: 1fr;
+  }
+
+  .ops-rail {
+    display: none;
+  }
+
+  .ops-card-header {
+    flex-direction: column;
   }
 
   .kpi-grid,

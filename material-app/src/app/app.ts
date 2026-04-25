@@ -17,6 +17,7 @@ type View = 'dashboard' | 'employees' | 'form' | 'detail' | 'style';
 type DetailTab = 'profile' | 'projects' | 'documents';
 type SortKey = 'name' | 'department' | 'hireDate';
 type EmployeeStatus = 'Active' | 'Pending' | 'Inactive';
+type OpsTone = 'success' | 'warning' | 'info' | 'danger';
 
 interface Employee {
   id: number;
@@ -51,13 +52,21 @@ interface EmployeeFormModel {
 interface ActivityItem {
   title: string;
   description: string;
+  system: string;
   time: string;
+  impact: string;
+  state: string;
+  tone: OpsTone;
 }
 
 interface TaskItem {
   title: string;
   owner: string;
   due: string;
+  system: string;
+  status: string;
+  priority: string;
+  tone: OpsTone;
 }
 
 interface StandardizationArea {
@@ -160,26 +169,62 @@ const SEED_EMPLOYEES: Employee[] = [
 
 const ACTIVITIES: ActivityItem[] = [
   {
-    title: 'Token-based colors aligned',
-    description: 'Material theming makes system-level colors and surfaces easier to keep consistent.',
-    time: 'Today, 09:15'
+    title: 'Payroll export approved for April close',
+    description: 'HR Operations released the monthly headcount export after Finance cleared the variance check.',
+    system: 'Workday -> SAP',
+    time: 'Today, 09:42',
+    impact: '23 records synchronized',
+    state: 'Completed',
+    tone: 'success'
   },
   {
-    title: 'Dialog behavior reviewed',
-    description: 'Approval patterns were checked against a shared modal interaction guideline.',
-    time: 'Yesterday, 16:40'
+    title: 'Vendor access exception escalated',
+    description: 'Security blocked an external recruiter account because MFA enrollment is still missing.',
+    system: 'ServiceNow',
+    time: 'Today, 08:10',
+    impact: 'Onboarding blocker',
+    state: 'Needs review',
+    tone: 'warning'
   },
   {
-    title: 'Form accessibility verified',
-    description: 'Labels, helper text, and error states were validated for the employee form.',
-    time: 'Yesterday, 11:05'
+    title: 'Travel policy update published',
+    description: 'Regional managers received the Q2 expense policy with acknowledgement tracking enabled.',
+    system: 'Policy Portal',
+    time: 'Yesterday, 17:25',
+    impact: '4 regions notified',
+    state: 'Published',
+    tone: 'info'
   }
 ];
 
 const TASKS: TaskItem[] = [
-  { title: 'Document Material wrappers', owner: 'Frontend Chapter', due: '2026-04-22' },
-  { title: 'Measure override count', owner: 'UX Governance', due: '2026-04-24' },
-  { title: 'Review table behavior', owner: 'HR Portal Team', due: '2026-04-26' }
+  {
+    title: 'Approve Q2 access recertification batch',
+    owner: 'Security Operations',
+    due: 'Today, 15:00',
+    system: 'Identity Governance',
+    status: '7 approvals pending',
+    priority: 'High',
+    tone: 'danger'
+  },
+  {
+    title: 'Review onboarding exceptions for DACH region',
+    owner: 'HR Shared Services',
+    due: 'Tomorrow, 10:30',
+    system: 'Employee Lifecycle',
+    status: '3 cases blocked',
+    priority: 'Medium',
+    tone: 'warning'
+  },
+  {
+    title: 'Publish finance close checklist version 6',
+    owner: 'Finance PMO',
+    due: 'Apr 25',
+    system: 'Controls Hub',
+    status: 'Awaiting controller sign-off',
+    priority: 'Low',
+    tone: 'info'
+  }
 ];
 
 const STANDARDIZATION_AREAS: StandardizationArea[] = [
@@ -334,7 +379,7 @@ export class App implements OnInit {
     const employees = this.employees();
 
     return [
-      { label: 'Employees', value: employees.length, note: 'Same mock dataset across frameworks' },
+      { label: 'Employees', value: employees.length, note: 'Mock dataset used in all three apps' },
       {
         label: 'Active',
         value: employees.filter((employee) => employee.status === 'Active').length,
@@ -350,7 +395,7 @@ export class App implements OnInit {
         value: `${Math.round(
           employees.reduce((sum, employee) => sum + employee.workload, 0) / employees.length
         )}%`,
-        note: 'Good KPI card candidate for dashboards'
+        note: 'Useful KPI card pattern for dashboards'
       }
     ];
   });

@@ -33,8 +33,8 @@
       <div class="eyebrow">Bachelor Thesis Prototype</div>
       <h1>Bootstrap Employee Portal</h1>
       <p class="sidebar-copy">
-        Frontend-only reference application for comparing standardization potential, flexibility, and
-        integration effort.
+        Frontend-only enterprise prototype application for comparing built-in standardization depth in
+        Angular.
       </p>
     </div>
 
@@ -42,7 +42,7 @@
       <span class="summary-label">Comparison scope</span>
       <strong>5 views</strong>
       <span>{{ employees().length }} mock employees</span>
-      <span>Common enterprise workflow set</span>
+      <span>Shared workflow specification</span>
     </div>
 
     <nav class="nav-stack" aria-label="Primary navigation">
@@ -87,14 +87,10 @@
           <div class="section-header">
             <div>
               <div class="eyebrow">Representative enterprise scenario</div>
-              <h3>Dashboard as one module, not the whole application</h3>
+              <h3>Dashboard</h3>
             </div>
-            <span class="pill-note">Best fit for SQ1-SQ3</span>
           </div>
-          <p class="section-copy">
-            The dashboard shows standardized summary widgets, while the rest of the application covers
-            forms, tables, detail views, validation, dialogs, and UI feedback patterns.
-          </p>
+          <p class="section-copy">Hello! This is an enterprise dashboard.</p>
         </section>
 
         <section class="kpi-grid">
@@ -123,15 +119,40 @@
           <article class="page-card">
             <div class="section-header compact">
               <h3>Recent activity</h3>
-              <span class="pill-note">Feedback and audit trail</span>
             </div>
-            <div class="stack-list">
-              @for (activity of activities; track activity.title) {
-                <div class="list-item">
-                  <strong>{{ activity.title }}</strong>
-                  <p>{{ activity.description }}</p>
-                  <span>{{ activity.time }}</span>
-                </div>
+            <div class="ops-timeline">
+              @for (activity of activities; track activity.title; let isLast = $last) {
+                <article class="ops-entry">
+                  <div class="ops-rail" [class.ops-rail-last]="isLast">
+                    <span
+                      class="ops-dot"
+                      [class.ops-dot-success]="activity.tone === 'success'"
+                      [class.ops-dot-warning]="activity.tone === 'warning'"
+                      [class.ops-dot-info]="activity.tone === 'info'"
+                      [class.ops-dot-danger]="activity.tone === 'danger'"></span>
+                  </div>
+                  <div class="ops-card">
+                    <div class="ops-card-header">
+                      <div>
+                        <div class="ops-eyebrow">{{ activity.system }}</div>
+                        <strong>{{ activity.title }}</strong>
+                      </div>
+                      <span
+                        class="ops-chip"
+                        [class.ops-chip-success]="activity.tone === 'success'"
+                        [class.ops-chip-warning]="activity.tone === 'warning'"
+                        [class.ops-chip-info]="activity.tone === 'info'"
+                        [class.ops-chip-danger]="activity.tone === 'danger'">
+                        {{ activity.state }}
+                      </span>
+                    </div>
+                    <p>{{ activity.description }}</p>
+                    <div class="ops-meta">
+                      <span>{{ activity.impact }}</span>
+                      <span>{{ activity.time }}</span>
+                    </div>
+                  </div>
+                </article>
               }
             </div>
           </article>
@@ -139,36 +160,35 @@
           <article class="page-card">
             <div class="section-header compact">
               <h3>Upcoming tasks</h3>
-              <span class="pill-note">Good for list standardization</span>
             </div>
-            <div class="stack-list">
+            <div class="ops-task-list">
               @for (task of tasks; track task.title) {
-                <div class="list-item">
-                  <strong>{{ task.title }}</strong>
-                  <p>Owner: {{ task.owner }}</p>
-                  <span>Due {{ task.due }}</span>
-                </div>
+                <article class="ops-task-card">
+                  <div class="ops-card-header">
+                    <div>
+                      <div class="ops-eyebrow">{{ task.system }}</div>
+                      <strong>{{ task.title }}</strong>
+                    </div>
+                    <span
+                      class="ops-chip"
+                      [class.ops-chip-success]="task.tone === 'success'"
+                      [class.ops-chip-warning]="task.tone === 'warning'"
+                      [class.ops-chip-info]="task.tone === 'info'"
+                      [class.ops-chip-danger]="task.tone === 'danger'">
+                      {{ task.priority }}
+                    </span>
+                  </div>
+                  <p>{{ task.status }}</p>
+                  <div class="ops-meta">
+                    <span>Owner {{ task.owner }}</span>
+                    <span>Due {{ task.due }}</span>
+                  </div>
+                </article>
               }
             </div>
           </article>
         </section>
 
-        <section class="page-card">
-          <div class="section-header">
-            <div>
-              <div class="eyebrow">SQ1 input</div>
-              <h3>Areas with strong standardization potential</h3>
-            </div>
-          </div>
-          <div class="candidate-grid">
-            @for (area of standardizationAreas; track area.area) {
-              <div class="candidate-card">
-                <h4>{{ area.area }}</h4>
-                <p>{{ area.reason }}</p>
-              </div>
-            }
-          </div>
-        </section>
       </div>
     }
 
@@ -177,10 +197,8 @@
         <section class="page-card">
           <div class="section-header">
             <div>
-              <div class="eyebrow">SQ2 comparison surface</div>
-              <h3>Employee list with realistic enterprise controls</h3>
+              <h3>Employee list with enterprise controls</h3>
             </div>
-            <span class="pill-note">Search, filters, pagination, row actions</span>
           </div>
 
           <div class="filter-grid">
@@ -350,7 +368,6 @@
               <div class="eyebrow">Form standardization</div>
               <h3>{{ formMode() === 'create' ? 'Create employee' : 'Edit employee' }}</h3>
             </div>
-            <span class="pill-note">Validation, grouping, primary and secondary actions</span>
           </div>
 
           <form #employeeFormRef="ngForm" novalidate (ngSubmit)="saveEmployee(employeeFormRef)">
@@ -624,10 +641,8 @@
         <section class="page-card">
           <div class="section-header">
             <div>
-              <div class="eyebrow">Style guide and evaluation support</div>
-              <h3>Reusable design and interaction standards</h3>
+              <h3>Reusable Bootstrap standards</h3>
             </div>
-            <span class="pill-note">Useful evidence for SQ1 and SQ3</span>
           </div>
 
           <div class="candidate-grid">
