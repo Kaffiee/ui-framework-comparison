@@ -4,9 +4,7 @@ This repository contains three Angular prototype applications for a bachelor the
 
 ## Research Focus
 
-Main research question:
-
-Which UI framework approaches are suitable for the effective and scalable standardization of UI components in corporate Angular applications?
+Which UI framework approach is most suitable for the effective and scalable standardization of UI components in enterprise Angular applications?
 
 The prototypes compare:
 
@@ -39,9 +37,3 @@ Build:
 ```bash
 npm run build
 ```
-
-## Thesis Matrix
-
-A ready-to-use evaluation matrix for SQ1-SQ3 is available here:
-
-- [docs/thesis-evaluation-matrix.md](docs/thesis-evaluation-matrix.md)
